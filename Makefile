@@ -6,6 +6,7 @@ RM			= rm -rf
 OBJ			= $(SRC:.c=.o)
 
 SRC =	main.c \
+		fork_util.c \
 
 all:	$(NAME)
 
