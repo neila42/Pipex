@@ -5,26 +5,26 @@ RM			= rm -rf
 
 OBJ			= $(SRC:.c=.o)
 
-SRC =	 \
+SRC =	main.c \
 
 all:	$(NAME)
 
 %.o : %.c
 	${CC} -c -o $@ $^ -I./libft ${CFLAGS}
-
-$(NAME):	libft $(OBJ)
+	
+$(NAME):	$(OBJ) 
+			${MAKE} -C libft	
 			gcc -o ${NAME} ${OBJ} -L./libft -lft
 
 libft:
 			${MAKE} -C libft
-			cp libft/libft.a ./${NAME}
 
 clean:
 			$(RM) $(OBJ)
 			$(MAKE) -C libft clean
 
 fclean:		clean
-			$(RM)$(NAME)
+			$(RM) $(NAME)
 			$(MAKE) -C libft fclean
 
 re:			fclean all
