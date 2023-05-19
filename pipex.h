@@ -1,13 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmuminov <nmuminov@student.42lausanne.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/09 13:10:31 by nmuminov          #+#    #+#             */
+/*   Updated: 2023/05/19 18:04:23 by nmuminov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PIPEX_H
 # define PIPEX_H
-
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include "libft.h"
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <sys/errno.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <string.h>
+# include <fcntl.h>
+# include <sys/wait.h>
+# include <sys/errno.h>
+# include "libft.h"
 
 typedef struct s_list_fork {
 	char	**arg_cmd1;
@@ -18,16 +29,11 @@ typedef struct s_list_fork {
 	char	**path_split;
 	char	*path_name_cmd1;
 	char	*path_name_cmd2;
-	char	**env
-}		t_list_fork;
+	char	**env;
+}			t_list_fork;
 
-char		*get_path(char **env);
-char		*get_path_name(char **path_split, char *prog_name);
-void	free_split(char **split);
-int		main(int argc, char **argv);
-int		first_fork(t_list_fork *list, int fd1, int fd2, int fd_pipe[2]);
-int		open_fd(char **argv, int fd1, int fd2);
-int		seconde_fork(t_list_fork *list, int fd2, int fd_pipe[2]);
 int		exec_fork(t_list_fork *list, char **argv);
+void	free_all(t_list_fork list);
+void	free_split(char **split);
 
 #endif

@@ -1,6 +1,6 @@
 NAME		= pipex
 CC			= gcc
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -Wall -Wextra -Werror -g3 
 RM			= rm -rf
 
 OBJ			= $(SRC:.c=.o)
@@ -15,7 +15,7 @@ all:	$(NAME)
 	
 $(NAME):	$(OBJ) 
 			${MAKE} -C libft	
-			gcc -o ${NAME} ${OBJ} -L./libft -lft
+			gcc -o ${NAME} ${OBJ} -L./libft -lft -fsanitize=address
 
 libft:
 			${MAKE} -C libft

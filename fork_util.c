@@ -1,9 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fork_util.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmuminov <nmuminov@student.42lausanne.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/09 13:10:31 by nmuminov          #+#    #+#             */
+/*   Updated: 2023/05/19 18:14:48 by nmuminov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
-int	first_fork(t_list_fork *list, int fd1, int fd2, int fd_pipe[2])
+static int	first_fork(t_list_fork *list, int fd1, int fd2, int *fd_pipe)
 {
 	if (fork() == 0)
 	{
+		close(fd2);
 		close(0);
 		if (dup2(fd1, 0) == -1 || dup2(fd_pipe[1], 1) == -1)
 		{
@@ -19,24 +32,26 @@ int	first_fork(t_list_fork *list, int fd1, int fd2, int fd_pipe[2])
 		perror("error exec command");
 		exit(1);
 	}
+	return (0);
 }
 
-int	open_fd(char **argv, int fd1, int fd2)
+static int	open_fd(char **argv, int *fd2)
 {
-	close(fd1);
-		fd2 = open(argv[4], O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR
+	*fd2 = open(argv[4], O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR
 			| S_IRGRP | S_IROTH);
-	if (fd2 == -1)
+	if (*fd2 == -1)
 	{
 		perror("open fd2");
 		exit(1);
 	}
+	return (0);
 }
 
-int	seconde_fork(t_list_fork *list, int fd2, int fd_pipe[2])
+static int	seconde_fork(t_list_fork *list, int fd1, int fd2, int *fd_pipe)
 {
 	if (fork() == 0)
 	{	
+		close(fd1);
 		close (1);
 		if (dup2(fd2, 1) == -1 || dup2(fd_pipe[0], 0) == -1)
 		{
@@ -53,6 +68,7 @@ int	seconde_fork(t_list_fork *list, int fd2, int fd_pipe[2])
 			exit(1);
 		}
 	}
+	return (0);
 }
 
 int	exec_fork(t_list_fork *list, char **argv)
@@ -62,21 +78,33 @@ int	exec_fork(t_list_fork *list, char **argv)
 	int	fd2;
 
 	fd1 = open(argv[1], O_RDONLY);
-	pipe(fd_pipe);
 	if (fd1 == -1)
 	{
 		perror("open fd1");
 		exit(1);
 	}
-	if (first_fork(list, fd1, fd2, fd_pipe[2]) == -1)
-		exit(1);
-	else if (seconde_fork(list, fd2, fd_pipe[2]))
+	open_fd(argv, &fd2);
+	pipe(fd_pipe);
+	if (first_fork(list, fd1, fd2, (int *)&fd_pipe)
+		|| seconde_fork(list, fd1, fd2, (int *)&fd_pipe))
 		exit(1);
 	close(fd_pipe[0]);
 	close(fd_pipe[1]);
+	close(fd2);
+	close(fd1);
 	while (wait(NULL) != -1)
 	{
 		if (errno != ECHILD)
 			perror("waiting failed");
 	}
+	return (0);
+}
+
+void	free_all(t_list_fork list)
+{
+	free_split(list.arg_cmd1);
+	free_split(list.arg_cmd2);
+	free_split(list.path_split);
+	free(list.path_name_cmd1);
+	free(list.path_name_cmd2);
 }
