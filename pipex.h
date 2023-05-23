@@ -6,7 +6,7 @@
 /*   By: nmuminov <nmuminov@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 13:10:31 by nmuminov          #+#    #+#             */
-/*   Updated: 2023/05/19 18:04:23 by nmuminov         ###   ########.fr       */
+/*   Updated: 2023/05/23 11:57:46 by nmuminov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ typedef struct s_list_fork {
 	char	*path_name_cmd1;
 	char	*path_name_cmd2;
 	char	**env;
+	int		fd1;
+	int		fd2;
 }			t_list_fork;
 
 int		exec_fork(t_list_fork *list, char **argv);

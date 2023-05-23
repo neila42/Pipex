@@ -6,7 +6,7 @@
 /*   By: nmuminov <nmuminov@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 13:10:31 by nmuminov          #+#    #+#             */
-/*   Updated: 2023/05/19 18:07:00 by nmuminov         ###   ########.fr       */
+/*   Updated: 2023/05/23 12:13:10 by nmuminov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ static char	*get_path_name(char **path_split, char *prog_name)
 		ft_strlcat(buff, *path_split, 255);
 		ft_strlcat(buff, "/", 255);
 		ft_strlcat(buff, prog_name, 255);
-		printf("pathname =>%s\n", buff);
 		if (access(buff, X_OK) == 0)
 			return (ft_strdup(buff));
 		path_split++;
@@ -50,11 +49,10 @@ void	free_split(char **split)
 	i = 0;
 	while (split[i])
 	{
-		split[i] = NULL;
+		free(split[i]);
 		i++;
 	}
 	free(split);
-	split = NULL;
 }
 
 static void	fail(char *str)
@@ -81,7 +79,7 @@ int	main(int argc, char **argv, char **env)
 		fail("error path\n");
 	list.path_split = ft_split(list.path, ':');
 	if (list.path_split == NULL)
-		fail("error path_spli\n");
+		fail("error path_split\n");
 	list.path_name_cmd1 = get_path_name(list.path_split, list.prog_name1);
 	list.path_name_cmd2 = get_path_name(list.path_split, list.prog_name2);
 	if (list.path_name_cmd1 == NULL || list.path_name_cmd2 == NULL)

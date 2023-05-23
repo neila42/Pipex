@@ -15,7 +15,7 @@ all:	$(NAME)
 	
 $(NAME):	$(OBJ) 
 			${MAKE} -C libft	
-			gcc -o ${NAME} ${OBJ} -L./libft -lft -fsanitize=address
+			gcc -o ${NAME} ${OBJ} -L./libft -lft
 
 libft:
 			${MAKE} -C libft
